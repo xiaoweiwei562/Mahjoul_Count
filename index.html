@@ -70,10 +70,23 @@
                 <button class="close-btn" id="close-confirm">×</button>
             </div>
             <div class="modal-body">
-                <p id="confirm-description" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem; color: var(--text-muted);"></p>
-                <div class="input-group" style="justify-content: center; gap: 15px; margin-bottom: 10px;">
-                    <label style="font-size: 1.1rem;">本次金额</label>
-                    <input type="number" id="confirm-amount" value="10" step="any" style="text-align: center; font-size: 1.3rem; width: 150px; font-weight: bold; color: var(--success); background: rgba(0, 0, 0, 0.3);">
+                <p id="confirm-description" style="text-align: center; margin-bottom: 15px; font-size: 1.1rem; color: var(--text-muted);"></p>
+                
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <div class="input-group" style="width: 100%; justify-content: center; gap: 15px; margin-bottom: 0;">
+                        <label style="font-size: 1.1rem;">本次金额</label>
+                        <input type="number" id="confirm-amount" value="10" step="any" style="text-align: center; font-size: 1.3rem; width: 150px; font-weight: bold; color: var(--success); background: rgba(0, 0, 0, 0.3);">
+                    </div>
+                    
+                    <!-- 快速选择选项 -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;" id="quick-amount-options">
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='0.5'">0.5</button>
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='1'">1</button>
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='2'">2</button>
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='5'">5</button>
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='10'">10</button>
+                        <button class="action-btn" style="padding: 8px 12px; font-size: 0.9rem;" onclick="document.getElementById('confirm-amount').value='20'">20</button>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -119,11 +132,8 @@
                     <div class="input-group">
                         <label>主题皮肤</label>
                         <select id="setting-theme" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 10px; padding: 10px; width: 140px; font-weight: 600; font-size: 0.95rem; outline: none;">
-                            <option value="indigo">🔮 幻影紫蓝 (推荐)</option>
-                            <option value="gold">✨ 极夜尊贵金</option>
-                            <option value="green">🀄 经典国风绿</option>
-                            <option value="red">🔥 烈焰熔岩红</option>
-                            <option value="light">☀️ 极简日光白</option>
+                            <option value="dark">🌙 暗色</option>
+                            <option value="light">☀️ 白色</option>
                         </select>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ let state = {
         [0, 0, 0, 0]
     ],
     settings: {
-        theme: 'indigo', // 默认幻影紫蓝 theme
+        theme: 'dark', // 默认暗色主题
         initial: 0,
         zimo: 10,
         fangchong: 10,
@@ -72,9 +72,12 @@ function init() {
 
 // 应用皮肤主题
 function applyTheme() {
-    const theme = state.settings.theme || 'indigo';
+    let theme = state.settings.theme || 'dark';
+    if (theme !== 'dark' && theme !== 'light') {
+        theme = 'dark';
+    }
     document.body.className = ''; // 清空类名
-    if (theme !== 'indigo') {
+    if (theme !== 'dark') {
         document.body.classList.add(`theme-${theme}`);
     }
 }
@@ -591,8 +594,8 @@ function loadState() {
                     [0, 0, 0, 0]
                 ];
             }
-            if (!state.settings.theme || state.settings.theme === 'gold') {
-                state.settings.theme = 'indigo';
+            if (!state.settings.theme || state.settings.theme !== 'light') {
+                state.settings.theme = 'dark';
             }
         } catch (e) {
             console.error('Failed to load state', e);
@@ -604,7 +607,7 @@ function populateSettings() {
     state.players.forEach((p, i) => {
         document.getElementById(`name-${i}`).value = p.name;
     });
-    document.getElementById('setting-theme').value = state.settings.theme || 'indigo';
+    document.getElementById('setting-theme').value = state.settings.theme || 'dark';
     document.getElementById('setting-initial').value = state.settings.initial;
     document.getElementById('setting-zimo').value = state.settings.zimo;
     document.getElementById('setting-fangchong').value = state.settings.fangchong;
