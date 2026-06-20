@@ -191,16 +191,27 @@
 
     <script src="./app.js"></script>
     <script>
-        // 注册 Service Worker
+        // 注册 Service Worker 并实现检测更新自动刷新
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
                         console.log('SW 注册成功: ', registration.scope);
+                        // 强制进行一次版本更新检测
+                        registration.update();
                     })
                     .catch(err => {
                         console.log('SW 注册失败: ', err);
                     });
+            });
+
+            // 当新的 Service Worker 接管控制权（即检测到新版本安装完成并激活）时，自动刷新当前页面
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
         }
     </script>
