@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mahjong-score-v2';
+const CACHE_NAME = 'mahjong-score-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const urlsToCache = [
 
 // 安装 Service Worker 并缓存资源
 self.addEventListener('install', event => {
+  self.skipWaiting(); // 强制立即接管控制权
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -31,16 +32,17 @@ self.addEventListener('fetch', event => {
 
 // 激活时清除旧缓存
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
+    self.clients.claim().then(() => {
+      return caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      });
     })
   );
 });
