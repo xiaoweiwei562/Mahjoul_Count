@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>麻将随身计分</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <!-- 引入简单的 SVG 图标可以内联，减少外部依赖，确保完全离线可用 -->
+</head>
+<body>
+    <header class="app-header">
+        <h1>🀄 麻将计分</h1>
+        <div class="header-actions">
+            <button id="btn-undo" class="icon-btn" aria-label="撤销" disabled>
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>
+            </button>
+            <button id="btn-history" class="icon-btn" aria-label="历史记录">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </button>
+            <button id="btn-settings" class="icon-btn" aria-label="设置">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard" id="dashboard">
+        <!-- 玩家卡片将由 JS 动态生成 -->
+    </main>
+
+    <!-- 选择放铳者弹窗 -->
+    <div id="modal-discard" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>请选择放铳者</h2>
+                <button class="close-btn" id="close-discard">×</button>
+            </div>
+            <div class="modal-body" id="discard-options">
+                <!-- 选项由 JS 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史记录弹窗 -->
+    <div id="modal-history" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>对局历史</h2>
+                <button class="close-btn" id="close-history">×</button>
+            </div>
+            <div class="modal-body">
+                <ul id="history-list" class="history-list">
+                    <!-- 历史记录由 JS 生成 -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-modal-undo" class="btn secondary">撤销上一笔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结算确认弹窗 -->
+    <div id="modal-confirm" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>结算确认</h2>
+                <button class="close-btn" id="close-confirm">×</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-description" style="text-align: center; margin-bottom: 20px; font-size: 1.1rem; color: var(--text-muted);"></p>
+                <div class="input-group" style="justify-content: center; gap: 15px; margin-bottom: 10px;">
+                    <label style="font-size: 1.1rem;">本次金额</label>
+                    <input type="number" id="confirm-amount" value="10" step="any" style="text-align: center; font-size: 1.3rem; width: 150px; font-weight: bold; color: var(--success); background: rgba(0, 0, 0, 0.3);">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-cancel-confirm" class="btn secondary">取消</button>
+                <button id="btn-submit-confirm" class="btn primary">确认结算</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关系图弹窗 -->
+    <div id="modal-relation" class="modal">
+        <div class="modal-content" style="max-width: 440px;">
+            <div class="modal-header">
+                <h2 id="relation-title">对局输赢图</h2>
+                <button class="close-btn" id="close-relation">×</button>
+            </div>
+            <div class="modal-body" style="padding: 12px 10px; display: flex; flex-direction: column; align-items: center; overflow-y: auto;">
+                <p id="relation-subtitle" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px; text-align: center; line-height: 1.4;"></p>
+                <div class="relation-map-container" id="relation-map-container">
+                    <!-- SVG and HTML nodes go here -->
+                </div>
+                <!-- 关系细节记录板 -->
+                <div id="relation-detail-panel" style="width: 100%; margin-top: 15px; border-top: 1px dashed var(--card-border); padding-top: 15px; display: none;">
+                    <h3 id="detail-panel-title" style="font-size: 0.9rem; color: var(--secondary); margin-bottom: 10px; font-weight: 600;">对局明细</h3>
+                    <div id="detail-panel-content" style="overflow-x: auto; width: 100%;">
+                        <!-- JS 动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div id="modal-settings" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>设置</h2>
+                <button class="close-btn" id="close-settings">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>界面主题</h3>
+                    <div class="input-group">
+                        <label>主题皮肤</label>
+                        <select id="setting-theme" style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 10px; padding: 10px; width: 140px; font-weight: 600; font-size: 0.95rem; outline: none;">
+                            <option value="indigo">🔮 幻影紫蓝 (推荐)</option>
+                            <option value="gold">✨ 极夜尊贵金</option>
+                            <option value="green">🀄 经典国风绿</option>
+                            <option value="red">🔥 烈焰熔岩红</option>
+                            <option value="light">☀️ 极简日光白</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>玩家名称</h3>
+                    <div class="input-group">
+                        <label>东</label>
+                        <input type="text" id="name-0" value="玩家一">
+                    </div>
+                    <div class="input-group">
+                        <label>南</label>
+                        <input type="text" id="name-1" value="玩家二">
+                    </div>
+                    <div class="input-group">
+                        <label>西</label>
+                        <input type="text" id="name-2" value="玩家三">
+                    </div>
+                    <div class="input-group">
+                        <label>北</label>
+                        <input type="text" id="name-3" value="玩家四">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>金额设定</h3>
+                    <div class="input-group">
+                        <label>初始分数</label>
+                        <input type="number" id="setting-initial" value="0" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>自摸 (赢家收)</label>
+                        <input type="number" id="setting-zimo" value="10" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>放铳 (赢家收)</label>
+                        <input type="number" id="setting-fangchong" value="10" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>花 (每人付)</label>
+                        <input type="number" id="setting-hua" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>杠 (每人付)</label>
+                        <input type="number" id="setting-gang" value="5" step="any">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-reset-game" class="btn danger">重置游戏</button>
+                <button id="btn-save-settings" class="btn primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+    <script>
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('SW 注册成功: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('SW 注册失败: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
